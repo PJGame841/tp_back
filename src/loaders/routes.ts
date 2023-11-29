@@ -9,4 +9,5 @@ export default (app: Express) => {
     logger.log('info', 'Registering routes');
 
     app.use(basePath + '/auth', require('../api/auth').default);
+    app.use(basePath + '/logement', require('../api/dpe').default);
 }
