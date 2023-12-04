@@ -3,6 +3,23 @@
 ### Fonctionnalités
 
 - Connexion/Inscription utilisateur
+- Recherche d'un logement selon tous les critère d'un DPE:
+```
+    "N°_département_(BAN)": number,
+    "Date_réception_DPE": string,
+    "Date_établissement_DPE": string,
+    "Date_visite_diagnostiqueur": string,
+    "Etiquette_GES": string,
+    "Etiquette_DPE": string,
+    "Année_construction": number,
+    "Surface_habitable_logement": number,
+    "Adresse_(BAN)": string,
+    "Code_postal_(BAN)": number,
+```
+- Sauvegarde d'une recherche
+- Récupération d'une recerche sauvegarder si les critères sont les même
+- Suppression d'une requête
+- Swagger sur l'endpoint `/api-docs`
 
 ### Utilisation
 

@@ -49,7 +49,7 @@ dpeSchema.method('searchNominatim', async function () {
         } : {});
         if (response.data.length === 0) throw new Error("Adresse introuvable");
 
-        console.log(response.data);
+        logger.log("debug", "Réponse de nominatim sur l'addresse " + this["Adresse_(BAN)"] + ": " + response.data);
         const { lon, lat } = response.data[0];
 
         return { lon, lat };
