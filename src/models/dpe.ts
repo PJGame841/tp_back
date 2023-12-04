@@ -60,4 +60,4 @@ dpeSchema.method('searchNominatim', async function () {
 
 export type DpeModel = Model<IDpe, {}, IDpeMethods>;
 
-export const Dpe = model<IDpe, DpeModel>('Dpe', dpeSchema);
+export const Dpe = model<IDpe, DpeModel>('depmini72', dpeSchema);

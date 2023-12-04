@@ -1,0 +1,135 @@
+openapi: 3.0.3
+info:
+  title: TPBack
+  description: API
+  version: 1.0.0
+servers:
+  -   url: http://localhost:3000
+      description: Development server
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - bearerAuth: []
+
+paths:
+  /api/v1/auth/login:
+    post:
+      security: []
+      tags:
+        - auth
+      summary: login
+      operationId: authLogin
+      description: Récupérer un token à partir de l'email et mot de passe
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '401':
+          description: Not Authorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  accessToken:
+                    type: string
+                  refreshToken:
+                    type: string
+                  expiresIn:
+                    type: number
+                  refreshExpiresIn:
+                    type: number
+  /api/v1/auth/register:
+    post:
+      security: []
+      tags:
+        - auth
+      summary: register
+      operationId: authRegister
+      description: Sauvegarder un nouvel utilisateur dans la base de données
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  accessToken:
+                    type: string
+                  refreshToken:
+                    type: string
+                  expiresIn:
+                    type: number
+                  refreshExpiresIn:
+                    type: number
+  /api/v1/auth/me:
+    get:
+      tags:
+        - auth
+      summary: get me
+      operationId: authGetMe
+      description: Savoir qui est connecté avec le token
+      responses:
+        '401':
+          description: Not Authorized
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  username:
+                    type: string
+                  email:
+                    type: string

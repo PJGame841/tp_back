@@ -11,7 +11,7 @@ export interface IUser {
 
 export interface IUserMethods {
     hashPassword(password: string): Promise<void>;
-    checkPassword(password: String): Promise<boolean>;
+    checkPassword(password: string): Promise<boolean>;
     createTokens(): { accessToken: string, refreshToken: string, expiresIn: number, refreshExpiresIn: number };
 }
 
@@ -39,4 +39,4 @@ userSchema.method('createTokens', function () {
     return { accessToken, refreshToken, expiresIn: accessExpire, refreshExpiresIn: refreshExpire };
 })
 
-export const User = model<IUser, UserModel>('User', userSchema);
+export const User = model<IUser, UserModel>('pjl_users', userSchema);

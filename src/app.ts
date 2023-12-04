@@ -6,6 +6,7 @@ import Logger from './services/logger';
 import dbLoader from './loaders/db';
 import routesLoader from './loaders/routes';
 import envLoader from './loaders/env';
+import swaggerLoder from './loaders/swagger';
 const app = express();
 const logger = new Logger().getInstance();
 
@@ -20,6 +21,7 @@ app.use(morgan('tiny'));
 app.use(bodyParser.json());
 
 routesLoader(app);
+swaggerLoder(app);
 
 const port = 3000;
 app.listen(port, () => logger.log('info', `Listening on port ${port}`));
