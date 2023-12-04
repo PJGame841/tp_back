@@ -48,10 +48,10 @@ const importData = async () => {
 export default async () => {
     let uri = process.env.MONGO_URL;
     if (uri == undefined) {
-        uri = await createDatabase();
+        uri = (await createDatabase()) + "dpe";
     }
 
-    return mongoose.connect(uri + "dpe").then(() => {
+    return mongoose.connect(uri).then(() => {
         logger.log('info', "Connected to MongoDB database ! Uri: " + uri);
 
         return process.env.MONGO_URL == null ? importData() : null;

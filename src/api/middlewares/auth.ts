@@ -1,11 +1,10 @@
 import {NextFunction, Response, Request} from "express";
 import jwt from "jsonwebtoken";
-import {Document, Types} from "mongoose";
-import {IUser, IUserMethods, User} from "~/models/user";
+import {User, UserDocument} from "~/models/user";
 import {getSecrets} from "~/services/auth";
 
 export interface AuthenticatedRequest extends Request {
-    user?: Document<unknown, {}, IUser> & Omit<IUser & {_id: Types.ObjectId}, keyof IUserMethods> & IUserMethods;
+    user?: UserDocument
 }
 
 export const isAuthenticated = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {

@@ -1,4 +1,4 @@
-import {model, Model, Schema} from "mongoose";
+import {Document, model, Model, Schema, Types} from "mongoose";
 import bcrypt from 'bcrypt';
 import jwt from "jsonwebtoken";
 import {accessExpire, getSecrets, refreshExpire} from "~/services/auth";
@@ -16,6 +16,8 @@ export interface IUserMethods {
 }
 
 export type UserModel = Model<IUser, {}, IUserMethods>;
+
+export type UserDocument = Document<unknown, {}, IUser> & Omit<IUser & {_id: Types.ObjectId}, keyof IUserMethods> & IUserMethods;
 
 const userSchema = new Schema<IUser, UserModel, IUserMethods>({
     username: { type: String, required: true },

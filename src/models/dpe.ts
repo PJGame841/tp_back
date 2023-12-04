@@ -1,63 +1,63 @@
-import {Schema, Number, model, Model} from "mongoose";
+import {Schema, Number, model, Model, Document, Types} from "mongoose";
 import axios from "axios";
 import Logger from "~/services/logger";
+import * as process from "process";
 
 const logger = new Logger().getInstance();
 
 export interface IDpe {
-    num_departement: number;
-    date_reception_dpe: string;
-    date_etablissement_dpe: string;
-    date_visite_diagnostiqueur: string;
-    etiquette_ges: string;
-    etiquette_dpe: string;
-    annee_construction: number;
-    surface_habitable: number;
-    adresse: string;
-    code_postal: number;
+    "N°_département_(BAN)": number,
+    "Date_réception_DPE": string,
+    "Date_établissement_DPE": string,
+    "Date_visite_diagnostiqueur": string,
+    "Etiquette_GES": string,
+    "Etiquette_DPE": string,
+    "Année_construction": number,
+    "Surface_habitable_logement": number,
+    "Adresse_(BAN)": string,
+    "Code_postal_(BAN)": number,
 }
 
 interface IDpeMethods {
-    searchNominatim(): Promise<{ longitude: string, lattitude: string }>;
+    searchNominatim(): Promise<{ lon: string, lat: string }>;
 }
 
+export type DpeModel = Model<IDpe, {}, IDpeMethods>;
+
+export type DpeDocument = Document<unknown, {}, IDpe> & Omit<IDpe & {_id: Types.ObjectId}, keyof IDpeMethods> & IDpeMethods;
+
 const dpeSchema = new Schema<IDpe>({
-    num_departement: { type: Number },
-    date_reception_dpe: { type: String },
-    date_etablissement_dpe: { type: String },
-    date_visite_diagnostiqueur: { type: String },
-    etiquette_ges: { type: String },
-    etiquette_dpe: { type: String },
-    annee_construction: { type: Number },
-    surface_habitable: { type: Number },
-    adresse: { type: String },
-    code_postal: { type: Number },
+    "N°_département_(BAN)": { type: Number },
+    "Date_réception_DPE": { type: String },
+    "Date_établissement_DPE": { type: String },
+    "Date_visite_diagnostiqueur": { type: String },
+    "Etiquette_GES": { type: String },
+    "Etiquette_DPE": { type: String },
+    "Année_construction": { type: Number },
+    "Surface_habitable_logement": { type: Number },
+    "Adresse_(BAN)": { type: String },
+    "Code_postal_(BAN)": { type: Number },
 })
 dpeSchema.method('searchNominatim', async function () {
-    const adresse_components = this.adresse.split(this.code_postal.toString());
-    const street = adresse_components[0].trim();
-    const city = adresse_components[1].trim();
-
     try {
-        const response = await axios.get(`https://nominatim.openstreetmap.org/search?q=${encodeURI(this.adresse)}&format=jsonv2&limit=1`, {
+        const response = await axios.get(`https://nominatim.openstreetmap.org/search?q=${encodeURI(this["Adresse_(BAN)"])}&format=jsonv2&limit=1`, !process.env.USE_UNIV_PROXY ? {
             proxy: {
                 protocol: 'http',
                 host: 'proxy.univ-lemans.fr',
                 port: 3128,
             }
-        });
+        } : {});
         if (response.data.length === 0) throw new Error("Adresse introuvable");
 
-        const { lon: longitude, lat: latitude } = response.data[0];
+        console.log(response.data);
+        const { lon, lat } = response.data[0];
 
-        return { longitude, latitude };
+        return { lon, lat };
     } catch (err: any) {
         logger.log("error", err.message);
         console.log(err);
-        return {longitude: null, latitude: null };
+        return {lon: null, lat: null };
     }
 });
-
-export type DpeModel = Model<IDpe, {}, IDpeMethods>;
 
 export const Dpe = model<IDpe, DpeModel>('depmini72', dpeSchema);
