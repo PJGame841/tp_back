@@ -4,6 +4,7 @@ const envVariables = [
     { name: "ACCESS_SECRET", required: true, type: "string" },
     { name: "REFRESH_SECRET", required: true, type: "string" },
     { name: "SALT_ROUND", required: true, type: "string" },
+    { name: "MONGO_URL", required: false, type: "string" }
 ]
 
 export default () => {

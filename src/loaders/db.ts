@@ -5,6 +5,7 @@ import path from "path";
 import { parse } from "csv-parse";
 import {Dpe} from "~/models/dpe";
 import Logger from "~/services/logger";
+import * as process from "process";
 const logger = new Logger().getInstance();
 
 const createDatabase = async () => {
@@ -45,11 +46,14 @@ const importData = async () => {
 }
 
 export default async () => {
-    const uri = await createDatabase();
+    let uri = process.env.MONGO_URL;
+    if (uri == undefined) {
+        uri = await createDatabase();
+    }
 
     return mongoose.connect(uri + "dpe").then(() => {
         logger.log('info', "Connected to MongoDB database ! Uri: " + uri);
 
-        return importData();
+        return process.env.MONGO_URL == null ? importData() : null;
     });
 }
