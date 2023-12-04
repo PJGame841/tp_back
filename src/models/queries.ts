@@ -1,20 +1,21 @@
 import {UserDocument} from "~/models/user";
 import {Document, model, Model, Schema, Types} from "mongoose";
-import {DpeDocument} from "~/models/dpe";
+import {Dpe} from "~/models/dpe";
+import Logger from "~/services/logger";
 
+const logger = new Logger().getInstance();
 
 export interface IQuery {
     user: object;
-    dep: object;
-    lat: string;
-    lon: string;
+    params: object;
+    results: [{ dep: object, lat: number, lon: number }];
 }
 
 export interface IQueryMethods {
 }
 
 export interface QueryModel extends Model<IQuery, {}, IQueryMethods> {
-    newQuery: (user: UserDocument, Dpe: DpeDocument) => Promise<QueryDocument>;
+    newQuery: (user: UserDocument, params: object) => Promise<QueryDocument>;
 }
 export type QueryDocument = Document<unknown, {}, IQuery> & Omit<IQuery & {_id: Types.ObjectId}, keyof IQueryMethods> & IQueryMethods;
 
@@ -25,30 +26,44 @@ const queryScema = new Schema<IQuery, QueryModel, IQueryMethods>({
         ref: 'pjl_users',
         required: true
     },
-    dep: {
-        type: Schema.Types.ObjectId,
-        ref: 'depmini72',
+    results: [{
+        dep: {
+            type: Schema.Types.ObjectId,
+            ref: 'depmini72',
+            required: true,
+        },
+        lat: {
+            type: Number,
+            required: true
+        },
+        lon: {
+            type: Number,
+            required: true
+        }
+    }],
+    params: {
+        type: Object,
         required: true,
     },
-    lat: {
-        type: String,
-        required: true,
-    },
-    lon: {
-        type: String,
-        required: true
-    }
 });
-queryScema.static("newQuery", async function (user, dpe) {
-    const { lon, lat } = await dpe.searchNominatim();
+queryScema.static("newQuery", async function (user, params) {
+    const deps = await Dpe.find(params);
+    const results = [];
+    for (const dep of deps) {
+        const { lon, lat } = await dep.searchNominatim();
+        if (!lon || !lat) {
+            logger.log("debug", "Aucune coordonées trouvées pour le DPE id: " + dep._id);
+            continue;
+        }
 
-    if (!lon || !lat) return null;
+        results.push({ dep: dep._id, lon, lat });
+    }
+    if (results.length == 0) return null;
 
     const query = new Query({
         user: user._id,
-        dep: dpe._id,
-        lat: lat,
-        lon: lon
+        params,
+        results
     });
     await query.save();
 

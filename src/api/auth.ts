@@ -32,7 +32,12 @@ router.post('/login', async (req, res) => {
 
     return res.json({
         success: true,
-        ...user.createTokens()
+        data: {
+            user,
+            tokens: {
+                ...user.createTokens()
+            }
+        }
     });
 });
 
@@ -48,7 +53,12 @@ router.post('/register', async (req, res) => {
         await user.save();
         return res.json({
             success: true,
-            ...user.createTokens()
+            data: {
+                user,
+                tokens: {
+                    ...user.createTokens()
+                }
+            }
         });
     } catch (error: any) {
         return res.status(400).json({success: false, message: error.message});

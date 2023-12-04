@@ -13,7 +13,91 @@ components:
       type: http
       scheme: bearer
       bearerFormat: JWT
-
+  schemas:
+    ApiError:
+      type: object
+      properties:
+        success:
+          type: boolean
+          default: false
+        message:
+          type: string
+    ApiSuccess:
+      type: object
+      properties:
+        success:
+          type: boolean
+          default: true
+    User:
+      type: object
+      properties:
+        _id:
+          type: string
+        username:
+          type: string
+        email:
+          type: string
+    Dpe:
+      type: object
+      properties:
+        _id:
+          type: string
+        "N°_département_(BAN)":
+          type: number
+        "Date_réception_DPE":
+          type: string
+        "Date_établissement_DPE":
+          type: string
+        "Date_visite_diagnostiqueur":
+          type: string
+        "Etiquette_GES":
+          type: string
+        "Etiquette_DPE":
+          type: string
+        "Année_construction":
+          type: number
+        "Surface_habitable_logement":
+          type: number
+        "Adresse_(BAN)":
+          type: string
+        "Code_postal_(BAN)":
+          type: number
+    Query:
+      type: object
+      properties:
+        _id:
+          type: string
+        user:
+          $ref: "#/components/schemas/User"
+        results:
+          type: array
+          items:
+            type: object
+            properties:
+              dep:
+                $ref: "#/components/schemas/Dpe"
+              lat:
+                type: number
+              lon:
+                type: number
+        params:
+          type: object
+    UserToken:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/User"
+        tokens:
+          type: object
+          properties:
+            accessToken:
+              type: string
+            refreshToken:
+              type: string
+            expiresIn:
+              type: number
+            refreshExpiresIn:
+              type: number
 security:
   - bearerAuth: []
 
@@ -42,29 +126,18 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                  message:
-                    type: string
+                $ref: "#/components/schemas/ApiError"
         '200':
           description: OK
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                  accessToken:
-                    type: string
-                  refreshToken:
-                    type: string
-                  expiresIn:
-                    type: number
-                  refreshExpiresIn:
-                    type: number
+                allOf:
+                  - $ref: "#/components/schemas/ApiSuccess"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/UserToken"
   /api/v1/auth/register:
     post:
       security: []
@@ -86,23 +159,23 @@ paths:
                 password:
                   type: string
       responses:
+        '400':
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
         '200':
           description: OK
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                  accessToken:
-                    type: string
-                  refreshToken:
-                    type: string
-                  expiresIn:
-                    type: number
-                  refreshExpiresIn:
-                    type: number
+                allOf:
+                  - $ref: "#/components/schemas/ApiSuccess"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/UserToken"
   /api/v1/auth/me:
     get:
       tags:
@@ -116,20 +189,77 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                  message:
-                    type: string
+                $ref: "#/components/schemas/ApiError"
         '200':
           description: OK
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  username:
-                    type: string
-                  email:
-                    type: string
+                allOf:
+                  - $ref: "#/components/schemas/ApiSuccess"
+                  - type: object
+                    properties:
+                      data:
+                        $ref: "#/components/schemas/User"
+  /api/v1/logement/search:
+    get:
+      tags:
+        - logement
+      summary: search
+      operationId: logementSearch
+      description: Trouver les coordonnées de logements selon des critères de recherche
+      responses:
+        '404':
+          description: Aucune coordonées trouvées pour les critères saisies
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiSuccess"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          cached:
+                            type: boolean
+                          query:
+                            $ref: "#/components/schemas/Query"
+  /api/v1/logement/{queryId}:
+    delete:
+      tags:
+        - logement
+      summary: delete search
+      operationId: logementDeleteSearch
+      description: Supprimer un résultat de recherche
+      parameters:
+        - in: path
+          name: queryId
+          description: ID de la recherche à supprimer
+      responses:
+        '404':
+          description: Recherche non trouvée pour l'ID fourni
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiSuccess"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          query:
+                            $ref: "#/components/schemas/Query"
