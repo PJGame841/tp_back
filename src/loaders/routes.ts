@@ -10,4 +10,5 @@ export default (app: Express) => {
 
     app.use(basePath + '/auth', require('../api/auth').default);
     app.use(basePath + '/logement', require('../api/dpe').default);
+    app.use(basePath + "/queries", require("../api/query").default);
 }

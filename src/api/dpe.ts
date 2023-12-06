@@ -22,16 +22,4 @@ router.get("/search", isAuthenticated, async (req: AuthenticatedRequest, res) =>
     res.json({success: true, data: { query: userQuery, cached }});
 })
 
-router.delete('/:queryId', isAuthenticated, async (req: AuthenticatedRequest, res) => {
-    if (!req.user) return res.status(401).json({ success: false, message: "Utilisateur non connecté !" });
-
-    const { queryId } = req.params;
-    if (!queryId) return res.status(404).json({ success: false, message: "Veuillez fournir un ID de DEP !" });
-
-    const query = await Query.findByIdAndDelete(queryId).populate("user", "-password").populate("results.dep");
-    if (query == null) return res.status(404).json({ success: false, message: "Requête non trouvé pour l'id de DEP fourni: " + req.params.id });
-
-    res.json({ success: true, data: { query } });
-});
-
 export default router;

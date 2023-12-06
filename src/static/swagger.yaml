@@ -231,18 +231,68 @@ paths:
                             type: boolean
                           query:
                             $ref: "#/components/schemas/Query"
+  /api/v1/queries:
+    get:
+      tags:
+        - query
+      summary: list queries
+      operationId: queriesList
+      description: Lister les recherches de l'utilisateur connecté
+      parameters:
+        - in: path
+          name: offset
+          description: Page de résultats à afficher
+          schema:
+              type: integer
+              default: 0
+          required: false
+      responses:
+        '401':
+          description: Utilisateur non connecté
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                allOf:
+                  - $ref: "#/components/schemas/ApiSuccess"
+                  - type: object
+                    properties:
+                      data:
+                        type: object
+                        properties:
+                          query:
+                            type: array
+                            items:
+                              $ref: "#/components/schemas/Query"
+                          limit:
+                            type: number
+                          offset:
+                            type: number
+                          length:
+                            type: number
   /api/v1/logement/{queryId}:
     delete:
       tags:
-        - logement
-      summary: delete search
-      operationId: logementDeleteSearch
-      description: Supprimer un résultat de recherche
+        - query
+      summary: delete query
+      operationId: queriesDelete
+      description: Supprimer une recherche
       parameters:
         - in: path
           name: queryId
           description: ID de la recherche à supprimer
       responses:
+        '401':
+          description: Utilisateur non connecté
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApiError"
         '404':
           description: Recherche non trouvée pour l'ID fourni
           content:
