@@ -1,20 +1,20 @@
 import {NextFunction, Response, Request} from "express";
 import jwt from "jsonwebtoken";
-import {User, UserDocument} from "~/models/user";
-import {getSecrets} from "~/services/auth";
+import {User, UserDocument} from "../../models/user";
+import {getSecrets} from "../../services/auth";
 
 export interface AuthenticatedRequest extends Request {
     user?: UserDocument
 }
 
-export const isAuthenticated = (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
+export const isAuthenticated = async (req: AuthenticatedRequest, res: Response, next: NextFunction) => {
     const { accessSecret } = getSecrets();
 
     const bearerHeader = req.get("Authorization");
     if (!bearerHeader) return res.status(401).json({ success: false, message: "No 'Authorization' header found !" });
 
     const authToken = bearerHeader.split(" ")[1];
-    jwt.verify(authToken, accessSecret, async (err, jwtPayload) => {
+    return jwt.verify(authToken, accessSecret, async (err, jwtPayload) => {
         if (err || !jwtPayload) {
             return res.status(401).json({ success: false, message: err ?? "Invalid payload" });
         }

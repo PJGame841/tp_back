@@ -1,6 +1,6 @@
 import {Schema, Number, model, Model, Document, Types} from "mongoose";
 import axios from "axios";
-import Logger from "~/services/logger";
+import Logger from "../services/logger";
 import * as process from "process";
 
 const logger = new Logger().getInstance();

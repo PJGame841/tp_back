@@ -1,8 +1,8 @@
 import {Router} from "express";
-import {AuthenticatedRequest, isAuthenticated} from "~/api/middlewares/auth";
-import {User} from "~/models/user";
-import {checkRefresh} from "~/services/auth";
-import Logger from "~/services/logger";
+import {AuthenticatedRequest, isAuthenticated} from "../api/middlewares/auth";
+import {User} from "../models/user";
+import {checkRefresh} from "../services/auth";
+import Logger from "../services/logger";
 
 const router = Router();
 const logger = new Logger().getInstance();
@@ -76,7 +76,12 @@ router.post("/refresh", async (req, res) => {
     const user = await User.findOne({ email: isValid.payload.email });
     if (!user) return res.status(404).json({ success: false, message: "L'utilisateur n'existe plus !" });
 
-    res.json({ success: true, ...user.createTokens() })
+    res.json({
+        success: true, data: {
+            user,
+            tokens: {...user.createTokens()}
+        }
+    });
 });
 
 export default router;

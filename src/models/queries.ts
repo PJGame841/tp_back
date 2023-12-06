@@ -1,7 +1,7 @@
-import {UserDocument} from "~/models/user";
+import {UserDocument} from "../models/user";
 import {Document, model, Model, Schema, Types} from "mongoose";
-import {Dpe} from "~/models/dpe";
-import Logger from "~/services/logger";
+import {Dpe} from "../models/dpe";
+import Logger from "../services/logger";
 
 const logger = new Logger().getInstance();
 
@@ -48,6 +48,8 @@ const queryScema = new Schema<IQuery, QueryModel, IQueryMethods>({
 });
 queryScema.static("newQuery", async function (user, params) {
     const deps = await Dpe.find(params);
+    logger.log("debug", "Found " + deps.length + " deps !");
+
     const results = [];
     for (const dep of deps) {
         const { lon, lat } = await dep.searchNominatim();

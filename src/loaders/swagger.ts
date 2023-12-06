@@ -3,7 +3,7 @@ import {Express} from "express";
 import fs from "node:fs";
 import path from "node:path";
 import yaml from "yaml";
-import Logger from "~/services/logger";
+import Logger from "../services/logger";
 
 const logger = new Logger().getInstance();
 

@@ -1,7 +1,7 @@
 import {Document, model, Model, Schema, Types} from "mongoose";
 import bcrypt from 'bcrypt';
 import jwt from "jsonwebtoken";
-import {accessExpire, getSecrets, refreshExpire} from "~/services/auth";
+import {accessExpire, getSecrets, refreshExpire} from "../services/auth";
 
 export interface IUser {
     username: string;
