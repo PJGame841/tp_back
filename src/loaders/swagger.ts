@@ -8,7 +8,8 @@ import Logger from "../services/logger";
 const logger = new Logger().getInstance();
 
 export default (app: Express) => {
-    const file = fs.readFileSync(path.resolve(__dirname, "../static/swagger.yaml"), 'utf-8');
+    const pathToSwagger = __dirname.includes("dist") ? "../src/static/swagger.yaml" : "../static/swagger.yaml";
+    const file = fs.readFileSync(path.resolve(__dirname, pathToSwagger), 'utf-8');
     const swaggerDocuement = yaml.parse(file);
 
     app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDocuement));

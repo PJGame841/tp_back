@@ -25,7 +25,8 @@ app.use(bodyParser.json());
 routesLoader(app);
 swaggerLoder(app);
 
-const port = process.env.PORT ?? 3000;
-export const server = app.listen(port, () => logger.log('info', `Listening on port ${port}`));
+const port = process.env.PORT ?? "3000";
+const host = process.env.HOST ?? "0.0.0.0";
+export const server = app.listen(parseInt(port), host, () => logger.log('info', `Listening on port ${port}`));
 
 export default app;
