@@ -1,6 +1,9 @@
 FROM node:18.20-alpine
 
-RUN apk add --no-cache tzdata
+RUN apk --update add \
+   	tzdata \
+   && cp /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone \
+   && apk del tzdata
 ENV TZ=Europe/Paris
 
 # Create app directory
