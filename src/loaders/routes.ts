@@ -11,4 +11,8 @@ export default (app: Express) => {
     app.use(basePath + '/auth', require('../api/auth').default);
     app.use(basePath + '/logement', require('../api/dpe').default);
     app.use(basePath + "/queries", require("../api/query").default);
+
+    app.get("/date", (req, res) => {
+        res.json({ success: true, data: { date: new Date() } });
+    })
 }
