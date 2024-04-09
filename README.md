@@ -27,6 +27,11 @@
 - Builder le projet avec `npm run build`
 - Et enfin lancer le avec `npm start`
 
+DOCKER:
+
+- Builder l'image avec `docker build --tag pjl2 .`
+- Lancer le container avec `docker run -p 28122:8080 -e ACCESS_SECRET=secret -e REFRESH_SECRET=secret -e SALT_ROUND=10 -e MONGO_URL=url -e USE_UNIV_PROXY=false --name pjl2-container pjl2`
+
 ### Développement
 
 - Installer les dépendances avec `npm install`
