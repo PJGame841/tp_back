@@ -1,0 +1,9 @@
+services:
+  pjl2:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "28122:8080"
+    env_file:
+      - .env
