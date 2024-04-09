@@ -1,5 +1,8 @@
 FROM node:18.20-alpine
 
+RUN apk add --no-cache tzdata
+ENV TZ=Europe/Paris
+
 # Create app directory
 WORKDIR /usr/src/app
 

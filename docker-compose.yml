@@ -7,7 +7,5 @@ services:
       - "127.0.0.1:28122:8080"
     env_file:
       - .env
-    environment:
-      TZ: "Europe/Paris"
     extra_hosts:
       - "host.docker.internal:host-gateway"
